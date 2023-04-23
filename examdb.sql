@@ -36,6 +36,13 @@ CREATE TABLE `tbl_cand` (
   `test_code` char(6) NOT NULL DEFAULT '' COMMENT '考试密码',
   `account_from` varchar(50) NOT NULL DEFAULT '' COMMENT '第三方来源',
   `account_id` varchar(50) NOT NULL DEFAULT '' COMMENT '第三方ID',
+  `cand_status` varchar(10) NOT NULL DEFAULT '' COMMENT '考生状态：init 创建，login 登录，photo 拍照，compare 比对，finish 交卷',
+  `cand_login_time` varchar(20) NOT NULL DEFAULT '' COMMENT '考生登录时间',
+  `cand_finish_time` varchar(20) NOT NULL DEFAULT '' COMMENT '考生交卷时间',
+  `cand_ip` varchar(50) NOT NULL DEFAULT '' COMMENT '考生IP',
+  `cand_env` varchar(200) NOT NULL DEFAULT '' COMMENT '考生客户端环境',
+  `cand_score` decimal(5,2) NOT NULL DEFAULT '0.00' COMMENT '考生试卷得分',
+  `is_delete` tinyint(1) NOT NULL DEFAULT 0  COMMENT '删除状态：0 否；1 是；',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`cand_id`),
@@ -80,26 +87,6 @@ CREATE TABLE `tbl_cand_log` (
   KEY `idx_cand` (`log_operator`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000010001 DEFAULT CHARSET=utf8mb3 COMMENT='考生作答日志';
 
-/*Table structure for table `tbl_cand_paper` */
-
-DROP TABLE IF EXISTS `tbl_cand_paper`;
-
-CREATE TABLE `tbl_cand_paper` (
-  `cand_id` int NOT NULL COMMENT '考生ID',
-  `exam_id` int NOT NULL COMMENT '考试ID',
-  `paper_id` int NOT NULL COMMENT '试卷ID',
-  `cand_status` varchar(10) NOT NULL DEFAULT '' COMMENT '考生状态',
-  `cand_login_time` varchar(20) NOT NULL DEFAULT '' COMMENT '考生实际登录时间',
-  `cand_finish_time` varchar(20) NOT NULL DEFAULT '' COMMENT '考生实际交卷时间',
-  `cand_ip` varchar(50) NOT NULL DEFAULT '' COMMENT '考生IP',
-  `cand_env` varchar(200) NOT NULL DEFAULT '' COMMENT '考生客户端环境',
-  `cand_score` decimal(5,2) NOT NULL DEFAULT '0.00' COMMENT '考生试卷得分',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  PRIMARY KEY (`cand_id`,`paper_id`),
-  KEY `idx_cand` (`cand_id`,`paper_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='考生作答试卷';
-
 /*Table structure for table `tbl_cand_section` */
 
 DROP TABLE IF EXISTS `tbl_cand_section`;
@@ -139,13 +126,16 @@ CREATE TABLE `tbl_exam` (
   `exam_id` int NOT NULL AUTO_INCREMENT COMMENT '考试ID',
   `tenant_id` int NOT NULL COMMENT '租户ID',
   `exam_name` varchar(200) NOT NULL DEFAULT '' COMMENT '考试名称',
+  `exam_start_time` timestamp NOT NULL COMMENT '考试开始时间',
+  `exam_end_time` timestamp NOT NULL COMMENT '考试结束时间',
   `exam_notice` text NOT NULL COMMENT '考试须知',
-  `exam_set_device` text NOT NULL COMMENT '设置-作答设备',
-  `exam_set_login` text NOT NULL COMMENT '设置-登录方式',
-  `exam_set_mode` text NOT NULL COMMENT '设置-开考模式',
-  `exam_set_time` text NOT NULL COMMENT '设置-时间限定',
-  `exam_set_security` text NOT NULL COMMENT '设置-安全要求',
-  `exam_set_custom` text NOT NULL COMMENT '设置-界面定制',
+  `exam_set_device` json NOT NULL COMMENT '设置-作答设备',
+  `exam_set_login` json NOT NULL COMMENT '设置-登录方式',
+  `exam_set_mode` json NOT NULL COMMENT '设置-开考模式',
+  `exam_set_time` json NOT NULL COMMENT '设置-时间限定',
+  `exam_set_security` json NOT NULL COMMENT '设置-安全要求',
+  `exam_set_custom` json NOT NULL COMMENT '设置-界面定制',
+  `is_delete` tinyint(1) NOT NULL DEFAULT 0  COMMENT '删除状态：0 否；1 是；',  
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`exam_id`),
@@ -194,6 +184,7 @@ CREATE TABLE `tbl_paper` (
   `tenant_id` int NOT NULL COMMENT '租户ID',
   `paper_name` varchar(200) NOT NULL DEFAULT '' COMMENT '试卷名称',
   `paper_duration` int NOT NULL DEFAULT '0' COMMENT '试卷时长（分钟）',
+  `is_delete` tinyint(1) NOT NULL DEFAULT 0  COMMENT '删除状态：0 否；1 是；',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`paper_id`),
@@ -223,6 +214,7 @@ CREATE TABLE `tbl_question` (
   `question_analysis` varchar(500) NOT NULL DEFAULT '' COMMENT '答案解析',
   `question_score` decimal(5,2) NOT NULL DEFAULT '1.00' COMMENT '分值',
   `question_memo` varchar(500) NOT NULL DEFAULT '' COMMENT '备注',
+  `is_delete` tinyint(1) NOT NULL DEFAULT 0  COMMENT '删除状态：0 否；1 是；',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`question_id`),
@@ -241,6 +233,7 @@ CREATE TABLE `tbl_section` (
   `section_name` varchar(100) NOT NULL DEFAULT '' COMMENT '单元名称',
   `section_order` int NOT NULL DEFAULT '0' COMMENT '单元排序',
   `section_random` int NOT NULL DEFAULT '0' COMMENT '单元乱序',
+  `is_delete` tinyint(1) NOT NULL DEFAULT 0  COMMENT '删除状态：0 否；1 是；',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`section_id`),
@@ -273,10 +266,27 @@ CREATE TABLE `tbl_tenant` (
   `tenant_email` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '租户邮箱',
   `login_name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '登录帐号',
   `login_password` varchar(100) NOT NULL DEFAULT '' COMMENT '登录密码',
+  `login_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '最近登录时间',
+  `is_delete` tinyint(1) NOT NULL DEFAULT 0  COMMENT '删除状态：0 否；1 是；',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`tenant_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8mb3 COMMENT='租户表';
+
+CREATE TABLE `tbl_rysnc_task` (
+  `rysnc_task_id` int NOT NULL AUTO_INCREMENT COMMENT '同步ID',
+  `exam_id` int NOT NULL COMMENT '考试ID',
+  `remote_exam_id` int NOT NULL COMMENT '远程考试ID',
+  `rysnc_status` varchar(10) NOT NULL DEFAULT '' COMMENT '同步状态：init 创建；exam 考试完成；paper 试卷完成；section 单元完成；question 试题完成；cand 考生完成；finish 完成；',
+  `rysnc_secret` varchar(100) NOT NULL DEFAULT '' COMMENT '推送密钥',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`rysnc_task_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8mb3 COMMENT='同步任务表';
+
+
+
+
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
