@@ -13,6 +13,7 @@ MySQL - 8.0.28 : Database - examdb
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 CREATE DATABASE /*!32312 IF NOT EXISTS*/`examdb` /*!40100 DEFAULT CHARACTER SET utf8 */ /*!80016 DEFAULT ENCRYPTION='N' */;
+SET SESSION sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
 
 USE `examdb`;
 
@@ -25,6 +26,7 @@ CREATE TABLE `tbl_cand` (
   `tenant_id` int NOT NULL COMMENT '租户ID',
   `exam_id` int NOT NULL COMMENT '考试ID',
   `paper_id` int NOT NULL COMMENT '试卷ID',
+  `category_id` int NOT NULL COMMENT '分类ID',
   `cand_name` varchar(50) NOT NULL DEFAULT '' COMMENT '考生姓名',
   `cand_number` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考生编号',
   `cand_idcard` varchar(50) NOT NULL DEFAULT '' COMMENT '考生身份证',
@@ -273,7 +275,7 @@ CREATE TABLE `tbl_tenant` (
   PRIMARY KEY (`tenant_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8mb3 COMMENT='租户表';
 
-CREATE TABLE `tbl_rysnc_task` (
+CREATE TABLE `tbl_task_rysnc` (
   `rysnc_task_id` int NOT NULL AUTO_INCREMENT COMMENT '同步ID',
   `exam_id` int NOT NULL COMMENT '考试ID',
   `remote_exam_id` int NOT NULL COMMENT '远程考试ID',
