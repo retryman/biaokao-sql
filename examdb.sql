@@ -44,10 +44,10 @@ CREATE TABLE `tbl_cand` (
   `created_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
   PRIMARY KEY (`cand_id`) USING BTREE,
-  INDEX `idx_paper_id`(`paper_id`) USING BTREE,
+  INDEX `idx_paper_id`(`exam_id`) USING BTREE,
   INDEX `idx_tenant_id`(`tenant_id`) USING BTREE,
   INDEX `idx_login_1`(`cand_id`, `test_code`) USING BTREE,
-  INDEX `idx_login_2`(`cand_idcard`,`exam_id`) USING BTREE
+  INDEX `idx_login_2`(`cand_idcard`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 10001001 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '考生表' ROW_FORMAT = Dynamic;
 
 /*Table structure for table `tbl_cand_answer` */
@@ -61,8 +61,7 @@ CREATE TABLE `tbl_cand_answer` (
   `fact_score` decimal(5, 2) NOT NULL DEFAULT 0.00 COMMENT '考生得分',
   `created_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
-  PRIMARY KEY (`cand_id`, `question_id`) USING BTREE,
-  INDEX `idx_answer`(`cand_id`, `question_id`) USING BTREE
+  PRIMARY KEY (`cand_id`, `question_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '考生作答试题' ROW_FORMAT = Dynamic;
 
 /*Table structure for table `tbl_cand_log` */
@@ -95,8 +94,7 @@ CREATE TABLE `tbl_cand_section` (
   `section_score` decimal(5, 2) NOT NULL DEFAULT 0.00 COMMENT '考生单元得分',
   `created_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
-  PRIMARY KEY (`cand_id`, `section_id`) USING BTREE,
-  INDEX `idx_cand`(`cand_id`, `section_id`) USING BTREE
+  PRIMARY KEY (`cand_id`, `section_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '考生作答单元' ROW_FORMAT = Dynamic;
 
 /*Table structure for table `tbl_category` */
@@ -105,7 +103,7 @@ DROP TABLE IF EXISTS `tbl_category`;
 
 CREATE TABLE `tbl_category` (
   `category_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '分类ID',
-  `parent_id` int(11) NOT NULL COMMENT '分类父ID',
+  `parent_id` int(11) NOT NULL DEFAULT 0 COMMENT '分类父ID',
   `tenant_id` int(11) NOT NULL COMMENT '租户ID',
   `category_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '分类名称',
   `category_order` int(11) NOT NULL DEFAULT 0 COMMENT '分类排序号',
@@ -149,8 +147,7 @@ CREATE TABLE `tbl_exam_paper`  (
   `paper_id` int(11) NOT NULL COMMENT '试卷ID',
   `created_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
-  PRIMARY KEY (`exam_id`, `paper_id`) USING BTREE,
-  INDEX `idx_main`(`exam_id`, `paper_id`) USING BTREE
+  PRIMARY KEY (`exam_id`, `paper_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '考试试卷关联表' ROW_FORMAT = Dynamic;
 
 /*Table structure for table `tbl_log` */
@@ -161,7 +158,6 @@ CREATE TABLE `tbl_log`  (
   `log_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '日志ID',
   `tenant_id` int(11) NOT NULL COMMENT '租户ID',
   `log_type` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '日志类型',
-  `log_time` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '日志时间',
   `log_operator` int(11) NOT NULL DEFAULT 0 COMMENT '日志操作者ID',
   `log_object` int(11) NOT NULL DEFAULT 0 COMMENT '日志操作对象ID',
   `log_desc` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '日志描述',
@@ -243,13 +239,14 @@ DROP TABLE IF EXISTS `tbl_section_question`;
 
 CREATE TABLE `tbl_section_question`  (
   `section_id` int(11) NOT NULL COMMENT '单元ID',
+  `paper_id` int(11) NOT NULL COMMENT '试卷ID',
   `question_id` int(11) NOT NULL COMMENT '试题ID',
   `question_score` decimal(5, 2) NOT NULL DEFAULT 1.00 COMMENT '试题分值',
   `question_order` int(11) NOT NULL DEFAULT 0 COMMENT '试题排序号',
   `created_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
-  PRIMARY KEY (`section_id`, `question_id`) USING BTREE,
-  INDEX `idx_main`(`section_id`, `question_id`) USING BTREE
+  PRIMARY KEY (`section_id`) USING BTREE,
+  INDEX `idx_paper`(`paper_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '单元试题关联表' ROW_FORMAT = Dynamic;
 
 /*Table structure for table `tbl_tenant` */
@@ -263,7 +260,7 @@ CREATE TABLE `tbl_tenant`  (
   `tenant_email` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '租户邮箱',
   `login_name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '登录帐号',
   `login_password` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '登录密码',
-  `login_at` timestamp(0) NOT NULL COMMENT '最近登录时间',
+  `login_at` timestamp(0) NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '最近登录时间',
   `is_delete` tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除状态：0 否；1 是；',
   `created_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
@@ -274,6 +271,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 CREATE TABLE `tbl_task_rysnc` (
   `task_rysnc_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '同步ID',
+  `tenant_id` int(11) NOT NULL COMMENT '租户ID',
   `exam_id` int(11) NOT NULL COMMENT '考试ID',
   `remote_exam_id` int(11) NOT NULL COMMENT '远程考试ID',
   `rysnc_status` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '同步状态：init 创建；exam 考试完成；paper 试卷完成；section 单元完成；question 试题完成；cand 考生完成；finish 完成；',
