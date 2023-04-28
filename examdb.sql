@@ -70,7 +70,7 @@ CREATE TABLE `tbl_cand_log` (
   `log_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '日志ID',
   `tenant_id` int(11) NOT NULL COMMENT '租户ID',
   `log_type` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '日志类型',
-  `log_time` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '日志时间',
+  `log_time` timestamp(0) NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '日志时间',
   `log_operator` int(11) NOT NULL DEFAULT 0 COMMENT '日志操作者ID',
   `log_object` int(11) NOT NULL DEFAULT 0 COMMENT '日志操作对象ID',
   `log_desc` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '日志描述',
@@ -121,7 +121,7 @@ CREATE TABLE `tbl_exam` (
   `exam_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '考试ID',
   `tenant_id` int(11) NOT NULL COMMENT '租户ID',
   `exam_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考试名称',
-  `exam_start_time` timestamp(0) NOT NULL ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '考试开始时间',
+  `exam_start_time` timestamp(0) NOT NULL COMMENT '考试开始时间',
   `exam_end_time` timestamp(0) NOT NULL COMMENT '考试结束时间',
   `exam_notice` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '考试须知',
   `exam_set_device` json NOT NULL COMMENT '设置-作答设备',
@@ -259,15 +259,15 @@ CREATE TABLE `tbl_tenant`  (
   `tenant_email` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '租户邮箱',
   `login_name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '登录帐号',
   `login_password` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '登录密码',
-  `login_at` timestamp(0) NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '最近登录时间',
+  `login_time` timestamp(0) NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '最近登录时间',
   `is_delete` tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除状态：0 否；1 是；',
   `created_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
   PRIMARY KEY (`tenant_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 100001 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '租户表' ROW_FORMAT = Dynamic;
 
-SET FOREIGN_KEY_CHECKS = 1;
 
+DROP TABLE IF EXISTS `tbl_task_rysnc`;
 CREATE TABLE `tbl_task_rysnc` (
   `task_rysnc_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '同步ID',
   `tenant_id` int(11) NOT NULL COMMENT '租户ID',
@@ -281,7 +281,7 @@ CREATE TABLE `tbl_task_rysnc` (
 ) ENGINE = InnoDB AUTO_INCREMENT = 100001 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '同步任务表' ROW_FORMAT = Dynamic;
 
 
-
+SET FOREIGN_KEY_CHECKS = 1;
 
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
