@@ -21,6 +21,7 @@ DROP TABLE IF EXISTS `tbl_cand`;
 CREATE TABLE `tbl_cand` (
   `cand_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '考生ID',
   `tenant_id` int(11) NOT NULL COMMENT '租户ID',
+  `category_id` int(11) NOT NULL COMMENT '分类ID',
   `exam_id` int(11) NOT NULL COMMENT '考试ID',
   `paper_id` int(11) NOT NULL COMMENT '试卷ID',
   `cand_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考生姓名',
@@ -103,6 +104,7 @@ CREATE TABLE `tbl_category` (
   `category_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '分类ID',
   `parent_id` int(11) NOT NULL DEFAULT 0 COMMENT '分类父ID',
   `tenant_id` int(11) NOT NULL COMMENT '租户ID',
+  `category_type` varchar(20) NOT NULL DEFAULT '' COMMENT '分类类型：question cand',
   `category_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '分类名称',
   `category_order` int(11) NOT NULL DEFAULT 0 COMMENT '分类排序号',
   `created_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
