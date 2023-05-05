@@ -39,6 +39,7 @@ CREATE TABLE `tbl_cand` (
   `cand_ip` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考生IP',
   `cand_env` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考生客户端环境',
   `cand_score` decimal(5, 2) NOT NULL DEFAULT 0.00 COMMENT '考生试卷得分',
+  `cand_delay` json NOT NULL DEFAULT '' COMMENT '考生延时信息',
   `is_delete` tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除状态：0 否；1 是；',
   `created_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
