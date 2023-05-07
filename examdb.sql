@@ -34,9 +34,11 @@ CREATE TABLE `tbl_cand` (
   `cand_memo` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考生备注',
   `test_code` char(6) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考试密码',  
   `cand_status` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考生状态：init 创建，login 登录，photo 拍照，compare 比对，finish 交卷',
-  `cand_login_time` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考生登录时间',
-  `cand_finish_time` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考生交卷时间',
+  `cand_login_time` char(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考生登录时间',
+  `cand_finish_time` char(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考生交卷时间',
   `cand_ip` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考生IP',
+  `cand_province` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考生登录IP所在省',
+  `cand_city` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考生登录IP所在市',
   `cand_env` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考生客户端环境',
   `cand_score` decimal(5, 2) NOT NULL DEFAULT 0.00 COMMENT '考生试卷得分',
   `cand_delay` json NULL COMMENT '考生延时信息',
@@ -71,17 +73,19 @@ DROP TABLE IF EXISTS `tbl_cand_log`;
 CREATE TABLE `tbl_cand_log` (
   `log_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '日志ID',
   `tenant_id` int(11) NOT NULL COMMENT '租户ID',
+  `exam_id` int(11) NOT NULL COMMENT '考试ID',
+  `cand_id` int(11) NOT NULL COMMENT '考生ID',
   `log_type` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '日志类型',
   `log_time` timestamp(0) NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '日志时间',
   `log_operator` int(11) NOT NULL DEFAULT 0 COMMENT '日志操作者ID',
-  `log_object` int(11) NOT NULL DEFAULT 0 COMMENT '日志操作对象ID',
   `log_desc` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '日志描述',
   `log_ip` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '日志IP',
   `log_env` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '日志客户端环境',
   `created_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
   PRIMARY KEY (`log_id`) USING BTREE,
-  INDEX `idx_cand`(`log_operator`) USING BTREE
+  INDEX `idx_cand`(`log_operator`) USING BTREE,
+  INDEX `idx_exam_cand`(`exam_id`,`cand_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1000010001 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '考生作答日志' ROW_FORMAT = Dynamic;
 
 /*Table structure for table `tbl_cand_section` */
