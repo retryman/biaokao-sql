@@ -2,7 +2,8 @@
 SQLyog Ultimate v12.09 (64 bit)
 MySQL - 8.0.28 : Database - examdb
 *********************************************************************
-*/
+*/
+
 
 /*!40101 SET NAMES utf8 */;
 
@@ -32,7 +33,7 @@ CREATE TABLE `tbl_cand` (
   `cand_dept` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考生单位',
   `cand_photo` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考生照片',
   `cand_memo` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考生备注',
-  `test_code` char(6) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考试密码',  
+  `test_code` char(6) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考试密码',
   `cand_status` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考生状态：init 创建，login 登录，photo 拍照，compare 比对，finish 交卷',
   `cand_login_time` char(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考生登录时间',
   `cand_finish_time` char(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考生交卷时间',
@@ -109,7 +110,7 @@ CREATE TABLE `tbl_category` (
   `category_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '分类ID',
   `parent_id` int(11) NOT NULL DEFAULT 0 COMMENT '分类父ID',
   `tenant_id` int(11) NOT NULL COMMENT '租户ID',
-  `category_type` varchar(20) NOT NULL DEFAULT '' COMMENT '分类类型：question cand',
+  `category_type` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '分类类型：question cand',
   `category_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '分类名称',
   `category_order` int(11) NOT NULL DEFAULT 0 COMMENT '分类排序号',
   `created_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -127,7 +128,7 @@ CREATE TABLE `tbl_exam` (
   `exam_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '考试ID',
   `tenant_id` int(11) NOT NULL COMMENT '租户ID',
   `exam_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考试名称',
-  `exam_start_time` timestamp(0) NOT NULL COMMENT '考试开始时间',
+  `exam_start_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '考试开始时间',
   `exam_end_time` timestamp(0) NOT NULL COMMENT '考试结束时间',
   `exam_notice` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '考试须知',
   `exam_set_device` json NOT NULL COMMENT '设置-作答设备',
@@ -191,8 +192,10 @@ CREATE TABLE `tbl_paper`  (
 
 /*Table structure for table `tbl_question` */
 
+-- ----------------------------
+-- Table structure for tbl_question
+-- ----------------------------
 DROP TABLE IF EXISTS `tbl_question`;
-
 CREATE TABLE `tbl_question`  (
   `question_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '试题ID',
   `tenant_id` int(11) NOT NULL COMMENT '租户ID',
@@ -220,10 +223,10 @@ CREATE TABLE `tbl_question`  (
   INDEX `idx_tenant_id`(`tenant_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1000001 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '试题表' ROW_FORMAT = Dynamic;
 
-/*Table structure for table `tbl_section` */
-
+-- ----------------------------
+-- Table structure for tbl_section
+-- ----------------------------
 DROP TABLE IF EXISTS `tbl_section`;
-
 CREATE TABLE `tbl_section`  (
   `section_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '单元ID',
   `tenant_id` int(11) NOT NULL COMMENT '租户ID',
@@ -238,10 +241,10 @@ CREATE TABLE `tbl_section`  (
   INDEX `idx_paper_id`(`paper_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 100001 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '单元表' ROW_FORMAT = Dynamic;
 
-/*Table structure for table `tbl_section_question` */
-
+-- ----------------------------
+-- Table structure for tbl_section_question
+-- ----------------------------
 DROP TABLE IF EXISTS `tbl_section_question`;
-
 CREATE TABLE `tbl_section_question`  (
   `section_id` int(11) NOT NULL COMMENT '单元ID',
   `paper_id` int(11) NOT NULL COMMENT '试卷ID',
@@ -254,10 +257,26 @@ CREATE TABLE `tbl_section_question`  (
   INDEX `idx_paper`(`paper_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '单元试题关联表' ROW_FORMAT = Dynamic;
 
-/*Table structure for table `tbl_tenant` */
+-- ----------------------------
+-- Table structure for tbl_task_rysnc
+-- ----------------------------
+DROP TABLE IF EXISTS `tbl_task_rysnc`;
+CREATE TABLE `tbl_task_rysnc`  (
+  `task_rysnc_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '同步ID',
+  `tenant_id` int(11) NOT NULL COMMENT '租户ID',
+  `exam_id` int(11) NOT NULL COMMENT '考试ID',
+  `remote_exam_id` int(11) NOT NULL COMMENT '远程考试ID',
+  `rysnc_status` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '同步状态：init 创建；exam 考试完成；paper 试卷完成；section 单元完成；question 试题完成；cand 考生完成；finish 完成；',
+  `rysnc_secret` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '推送密钥',
+  `created_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
+  PRIMARY KEY (`task_rysnc_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '同步任务表' ROW_FORMAT = Dynamic;
 
+-- ----------------------------
+-- Table structure for tbl_tenant
+-- ----------------------------
 DROP TABLE IF EXISTS `tbl_tenant`;
-
 CREATE TABLE `tbl_tenant`  (
   `tenant_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '租户ID',
   `tenant_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '租户名称',
@@ -270,28 +289,14 @@ CREATE TABLE `tbl_tenant`  (
   `created_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
   PRIMARY KEY (`tenant_id`) USING BTREE,
-  UNIQUE INDEX `login_name`(`login_name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 100001 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '租户表' ROW_FORMAT = Dynamic;
+  UNIQUE INDEX `login_name`(`login_name`) USING BTREE,
+  UNIQUE INDEX `tenant_name`(`tenant_name`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '租户表' ROW_FORMAT = Dynamic;
 
-
-DROP TABLE IF EXISTS `tbl_task_rysnc`;
-CREATE TABLE `tbl_task_rysnc` (
-  `task_rysnc_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '同步ID',
-  `tenant_id` int(11) NOT NULL COMMENT '租户ID',
-  `exam_id` int(11) NOT NULL COMMENT '考试ID',
-  `remote_exam_id` int(11) NOT NULL COMMENT '远程考试ID',
-  `rysnc_status` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '同步状态：init 创建；exam 考试完成；paper 试卷完成；section 单元完成；question 试题完成；cand 考生完成；finish 完成；',
-  `rysnc_secret` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '推送密钥',
-  `created_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
-  PRIMARY KEY (`task_rysnc_id`) USING BTREE  
-) ENGINE = InnoDB AUTO_INCREMENT = 100001 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '同步任务表' ROW_FORMAT = Dynamic;
-
+-- ----------------------------
+-- Records of tbl_tenant
+-- ----------------------------
+INSERT INTO `tbl_tenant` VALUES (1, 'tanantname', '13811334455', '111@qq.com', 'username', '173e794615af94a9a747899a53e1e64b', '2023-05-10 14:34:28', 0, '2023-05-10 14:34:28', '2023-05-10 15:30:45');
+INSERT INTO `tbl_tenant` VALUES (5, '企业1', '', '', 'admin1', 'admin123', '2023-05-15 13:19:59', 0, '2023-05-15 13:19:59', '2023-05-15 13:19:59');
 
 SET FOREIGN_KEY_CHECKS = 1;
-
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
