@@ -253,8 +253,8 @@ CREATE TABLE `tbl_section_question`  (
   `question_order` int(11) NOT NULL DEFAULT 0 COMMENT '试题排序号',
   `created_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
-  INDEX `idx_section`(`section_id`) USING BTREE,
-  INDEX `idx_paper`(`paper_id`) USING BTREE
+  INDEX `idx_paper`(`paper_id`) USING BTREE,
+  UNIQUE INDEX `idx_section_question`(`section_id`, `question_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '单元试题关联表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
