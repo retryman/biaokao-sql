@@ -22,7 +22,6 @@ DROP TABLE IF EXISTS `tbl_cand`;
 CREATE TABLE `tbl_cand` (
   `cand_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '考生ID',
   `tenant_id` int(11) NOT NULL COMMENT '租户ID',
-  `category_id` int(11) NOT NULL COMMENT '分类ID',
   `exam_id` int(11) NOT NULL COMMENT '考试ID',
   `paper_id` int(11) NOT NULL COMMENT '试卷ID',
   `cand_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '考生姓名',
